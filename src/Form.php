@@ -1,8 +1,8 @@
 <?php
 
-namespace Elevatedigital\Form;
+namespace Elevatedigital\WpForm;
 
-use Elevatedigital\Form\Inputs\Input;
+use Elevatedigital\WpForm\Inputs\Input;
 
 class Form
 {

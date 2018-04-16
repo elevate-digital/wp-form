@@ -1,6 +1,6 @@
 <?php
 
-namespace Elevatedigital\Form;
+namespace Elevatedigital\WpForm;
 
 
 class FormRequest
@@ -20,6 +20,7 @@ class FormRequest
         $this->form = Form::findOrFail($this->getNameFromRequest());
 
         // Todo: find a way to redirect back with invalid form values
+        // Todo: check required form values
         $sanitizedValues = $this->validateFields($this->form->fields);
 
         $this->createFormSubmission($sanitizedValues);

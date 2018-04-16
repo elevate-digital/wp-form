@@ -1,6 +1,6 @@
 <?php
 
-namespace Elevatedigital\Form;
+namespace Elevatedigital\WpForm;
 
 class FormFactory
 {

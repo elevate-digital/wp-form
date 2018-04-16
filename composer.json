@@ -1,16 +1,16 @@
 {
-    "name": "elevatedigital/form",
+    "name": "elevatedigital/wp-form",
     "description": "Package to easily create a form within a WordPress theme.",
     "type": "library",
     "authors": [
         {
-            "name": "Ian scheele",
+            "name": "Ian Scheele",
             "email": "ian@elevatedigital.nl"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Elevatedigital\\Form\\": "src/"
+            "Elevatedigital\\WpForm\\": "src/"
         }
     },
     "require": {}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elevatedigital\Form\Inputs;
+namespace Elevatedigital\WpForm\Inputs;
 
 class Input
 {
