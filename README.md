@@ -1,3 +1,8 @@
+Include the functions
+
+`use Elevatedigital\WpForm\Form;`
+
+Register a form
 ```
 add_action('init', function () {
     $fields = [
