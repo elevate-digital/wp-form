@@ -2,31 +2,43 @@
 
 namespace Elevatedigital\WpForm;
 
-
 class FormRequest
 {
 
-    public $request;
+    public $request = [];
+    public $errors = [];
     protected $form;
 
     public function handle()
     {
         $this->request = $_POST;
 
-        $this->checkPostLimitExceeded();
+//        $this->checkPostLimitExceeded();
 
         wp_verify_nonce($_POST['_wpnonce'], $_POST['action']);
 
         $this->form = Form::findOrFail($this->getNameFromRequest());
 
-        // Todo: find a way to redirect back with invalid form values
-        // Todo: check required form values
-        $sanitizedValues = $this->validateFields($this->form->fields);
+        $values = $this->validateFields($this->form->fields);
 
-        $this->createFormSubmission($sanitizedValues);
+        if ($this->hasErrors()) {
+            $url = esc_url(add_query_arg('errors', $this->errors, $_POST['_wp_http_referer']));
+            wp_redirect($url);
+            die();
+        }
+
+        $this->createFormSubmission($values);
+
+         $email = new Email($this->form, $values);
+         $email->send();
 
         wp_redirect($this->form->getRedirect());
         exit;
+    }
+
+    protected function hasErrors()
+    {
+        return count($this->errors);
     }
 
     protected function getNameFromRequest()
@@ -36,22 +48,36 @@ class FormRequest
 
     public function validateFields(array $fields)
     {
-        $values = array_map(function ($field) {
-            $sanitizeMethod = $this->get_field_sanitize_type($field['type']);
+        $validatedValues = [];
 
-            return call_user_func_array($sanitizeMethod, [$this->request[ $field['name'] ]]);
-        }, $fields);
+        foreach ($fields as $key => $field) {
+            $valueFromRequest = $this->request[ $field['name'] ];
+            $sanitizeMethod   = $this->get_field_sanitize_type($field['type']);
 
-        $keys = array_map(function ($field) {
-            return $field['name'];
-        }, $fields);
+            $this->checkRequired($field);
 
-        $values = array_combine($keys, $values);
+            $validatedValues[ $field['name'] ] = call_user_func_array($sanitizeMethod, [$valueFromRequest]);
+        }
 
-        return $values;
+        return $validatedValues;
     }
 
-    function get_field_sanitize_type(string $type)
+    private function checkRequired($field)
+    {
+        if ( ! $field['required']) {
+            return false;
+        }
+
+        if ( ! $this->request[ $field['name'] ]) {
+            if ( ! isset($this->errors[ $field['name'] ])) {
+                $this->errors[ $field['name'] ] = [];
+            }
+
+            $this->errors[ $field['name'] ][] = "The {$field['name']} field is required";
+        }
+    }
+
+    private function get_field_sanitize_type(string $type)
     {
         switch ($type) {
             case 'text':
@@ -69,6 +95,8 @@ class FormRequest
 
     protected function createFormSubmission(array $meta)
     {
+        $meta['form'] = $this->form->name;
+
         $post = [
             'post_title'  => ucfirst($this->form->name),
             'post_status' => 'publish',

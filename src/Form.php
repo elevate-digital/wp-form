@@ -18,12 +18,6 @@ class Form
         $this->arguments = $arguments;
     }
 
-    public function getRedirect()
-    {
-        // Todo: set a default redirect to _wp_referrer from post request
-        return $this->arguments['redirect'];
-    }
-
     public static function register($name, $fields, $arguments)
     {
         FormFactory::instance()->register(new Form($name, $fields, $arguments));
@@ -53,5 +47,21 @@ class Form
     public static function input($type, $props)
     {
         return Input::create($type, $props);
+    }
+
+    public function getErrors($name)
+    {
+        if ( ! $errors = $_GET['errors']) {
+            return false;
+        }
+
+        if (isset($errors[ $name ])) {
+            return $errors[ $name ];
+        }
+    }
+
+    public function getRedirect()
+    {
+        return $this->arguments['redirect'];
     }
 }

@@ -11,6 +11,7 @@ class FormFactory
     private function __construct()
     {
         $this->registerPostType();
+        add_action('add_meta_boxes_form_submit', [$this, 'initMetaboxes']);
     }
 
     private function registerPostType()
@@ -44,7 +45,7 @@ class FormFactory
             'has_archive'        => false,
             'hierarchical'       => false,
             'menu_position'      => null,
-            'supports'           => array('title', 'custom-fields'),
+            'supports'           => ['title'],
         ];
 
         register_post_type('form_submit', $args);
@@ -58,6 +59,29 @@ class FormFactory
         }
 
         return $inst;
+    }
+
+    public function initMetaboxes()
+    {
+        add_meta_box(
+            'elevate_form_metabox',
+            'Form values',
+            [$this, 'metaboxHTML'],
+            'form_submit',
+            'normal',
+            'high'
+        );
+    }
+
+    public function metaboxHTML($formSubmit, $metabox)
+    {
+        $form = Form::findOrFail(get_post_meta($formSubmit->ID, 'form', true));
+
+        foreach ($form->fields as $field) {
+            $name = ucfirst($field['name']);
+            $value = get_post_meta($formSubmit->ID, $field['name'], true);
+            echo "<div class='elevate-form-meta'><p><strong>{$name}: </strong>{$value}</p></div>";
+        }
     }
 
     public function register(Form $form)
