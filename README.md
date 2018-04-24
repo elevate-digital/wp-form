@@ -1,3 +1,18 @@
+### Installation
+Add the repo to your `composer.json` file.
+```php
+"repositories": [
+  {
+    "url": "https://github.com/elevate-digital/wp-form.git",
+    "type": "git"
+  }
+],
+```
+
+Then add the repo to your `require` section
+```php
+  "elevatedigital/wp-form": "~1.0.0-beta"
+```
 Include the functions wherever you need them:
 
 `use Elevatedigital\WpForm\Form;`
@@ -7,7 +22,7 @@ The `Form::register()` functions takes a name as it's first parameter and and ar
 A optional third argument is used to set other data like the path to redirect to after a succesfull submission.
 
 ### Example form registration
-```
+```php
 add_action('init', function () {
     $fields = [
         [
@@ -42,7 +57,7 @@ Like so:
 `https://example.com/contact/?errors[name][0]=The name field is required`
 
 The errors can be retrieved via a method.
-```
+```php
 <?php if ( $mail_errors = Form::getErrors('email') ) : ?>
    <?php foreach ( $mail_errors as $error ) : ?>
      <p><?= $error ?></p>
