@@ -51,9 +51,11 @@ class Form
 
     public static function getErrors($name)
     {
-        if ( ! isset($_GET['errors']) && $errors = $_GET['errors']) {
+        if (! isset($_GET['errors']) {
             return false;
         }
+            
+        $errors = $_GET['errors'];
 
         if (isset($errors[ $name ])) {
             return $errors[ $name ];
