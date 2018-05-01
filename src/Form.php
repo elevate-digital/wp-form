@@ -49,7 +49,7 @@ class Form
         return Input::create($type, $props);
     }
 
-    public function getErrors($name)
+    public static function getErrors($name)
     {
         if ( ! $errors = $_GET['errors']) {
             return false;
