@@ -13,7 +13,7 @@ class FormRequest
     {
         $this->request = $_POST;
 
-        //        $this->checkPostLimitExceeded();
+        $this->checkPostLimitExceeded();
 
         wp_verify_nonce($_POST['_wpnonce'], $_POST['action']);
 

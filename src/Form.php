@@ -55,6 +55,8 @@ class Form
             return false;
         }
 
+        $errors = $_GET['errors'];
+
         if (isset($errors[ $name ])) {
             return $errors[ $name ];
         }
