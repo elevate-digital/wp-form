@@ -30,9 +30,9 @@ class Input
     public function __construct(array $props)
     {
         $this->setAttribute('name', $props['name']);
-        $this->setAttribute('value', $props['value']);
-        $this->setAttribute('class', $props['class']);
-        $this->setAttribute('placeholder', $props['placeholder']);
+        $this->setAttribute('value', $props['value'] ?? false);
+        $this->setAttribute('class', $props['class'] ?? false);
+        $this->setAttribute('placeholder', $props['placeholder'] ?? false);
     }
 
     /**

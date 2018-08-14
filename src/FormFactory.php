@@ -5,7 +5,7 @@ namespace Elevatedigital\WpForm;
 class FormFactory
 {
 
-    private static $textDomain = 'elevatedigital-form';
+    private $textDomain = 'elevatedigital-form';
     private $forms = [];
 
     private function __construct()

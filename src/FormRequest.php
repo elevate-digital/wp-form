@@ -13,7 +13,7 @@ class FormRequest
     {
         $this->request = $_POST;
 
-//        $this->checkPostLimitExceeded();
+        //        $this->checkPostLimitExceeded();
 
         wp_verify_nonce($_POST['_wpnonce'], $_POST['action']);
 
@@ -22,23 +22,20 @@ class FormRequest
         $values = $this->validateFields($this->form->fields);
 
         if ($this->hasErrors()) {
-            $url = esc_url(add_query_arg('errors', $this->errors, $_POST['_wp_http_referer']));
+            $url = $this->getPreviousUrlWithEncodedErrors();
+
             wp_redirect($url);
+
             die();
         }
 
         $this->createFormSubmission($values);
 
-         $email = new Email($this->form, $values);
-         $email->send();
+        $email = new Email($this->form, $values);
+        $email->send();
 
         wp_redirect($this->form->getRedirect());
         exit;
-    }
-
-    protected function hasErrors()
-    {
-        return count($this->errors);
     }
 
     protected function getNameFromRequest()
@@ -62,21 +59,6 @@ class FormRequest
         return $validatedValues;
     }
 
-    private function checkRequired($field)
-    {
-        if ( ! $field['required']) {
-            return false;
-        }
-
-        if ( ! $this->request[ $field['name'] ]) {
-            if ( ! isset($this->errors[ $field['name'] ])) {
-                $this->errors[ $field['name'] ] = [];
-            }
-
-            $this->errors[ $field['name'] ][] = "The {$field['name']} field is required";
-        }
-    }
-
     private function get_field_sanitize_type(string $type)
     {
         switch ($type) {
@@ -93,7 +75,49 @@ class FormRequest
         }
     }
 
-    protected function createFormSubmission(array $meta)
+    private function checkRequired($field)
+    {
+        if ( ! isset($field['validation']['required'])) {
+            return false;
+        }
+
+        if ( ! $this->request[ $field['name'] ]) {
+            if ( ! isset($this->errors[ $field['name'] ])) {
+                $this->errors[ $field['name'] ] = [];
+            }
+
+            $this->errors[ $field['name'] ][] = $this->getValidationMessage('required', $field);
+        }
+    }
+
+    private function getValidationMessage(string $validationRule, array $field)
+    {
+        switch ($validationRule) {
+            case 'required':
+                return is_string($customMessage = $field['validation']['required']) ? $this->formatCustomErrorMessage($customMessage, $field) : "The {$field['name']} field is required";
+        }
+    }
+
+    private function formatCustomErrorMessage(string $message, array $field)
+    {
+        str_replace(':name:', $field['name'], $message);
+
+        return $message;
+    }
+
+    private function hasErrors()
+    {
+        return count($this->errors);
+    }
+
+    private function getPreviousUrlWithEncodedErrors()
+    {
+        return add_query_arg('errors', array_map(function($error) {
+            return urlencode_deep($error);
+        }, $this->errors), $_POST['_wp_http_referer']);
+    }
+
+    private function createFormSubmission(array $meta)
     {
         $meta['form'] = $this->form->name;
 
