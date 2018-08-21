@@ -28,17 +28,26 @@ add_action('init', function () {
         [
             'name'     => 'name',
             'type'     => 'text',
-            'required' => true,
+            'validation' => 
+              [
+                'required' => 'Custom error response message'
+              ],
         ],
         [
             'name'     => 'email',
             'type'     => 'text',
-            'required' => true,
+            'validation' => 
+            [
+              'required',
+            ],
         ],
         [
             'name'     => 'message',
             'type'     => 'textarea',
-            'required' => true,
+            'validation' => 
+            [
+              'required',
+            ],
         ],
     ];
 
