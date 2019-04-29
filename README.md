@@ -60,6 +60,22 @@ add_action('init', function () {
 });
 ```
 
+### Display the form
+This package does not provide a way to display the entire form. That way the developer is free to implement a form however he/she wishes.
+However there are a few helpers to make things easier.
+
+Below is a code example of how to display a form
+```php
+<?php echo  Elevatedigital\WpForm\Form::open('contact'); ?>
+
+    <input class="form-control" type="text" name="name" placeholder="Naam">
+    <input class="form-control" type="email" name="email" placeholder="E-mailadres">
+    <textarea name="message" placeholder="Bericht"></textarea>
+    <button type="submit" class="btn btn-primary">Verstuur</button>
+
+<?php echo Elevatedigital\WpForm\Form::close(); ?>
+```
+
 ### Validation
 Validation is based on wether the field is required. If not the error messages are returned via GET variables.
 Like so:
