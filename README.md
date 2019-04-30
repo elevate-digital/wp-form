@@ -8,7 +8,7 @@ Add the repo to your `composer.json` file.
   }
 ],
 ```
-test
+
 Then add the repo to your `require` section
 ```php
   "elevatedigital/wp-form": "~1.0.0-beta"
